@@ -15,10 +15,10 @@ export const FirebaseProvider = (props) => {
   const readAllData = (DBname) => {
     const DBref = firebaseDB.collection(DBname);
     DBref.onSnapshot((querySnapshot) => {
-      const dataArry = [];
+      const dataArray = [];
       querySnapshot.forEach((doc) => {
-        dataArry.push(doc.data());
-        console.log(dataArry);
+        dataArray.push(doc.data());
+        console.log(dataArray);
       });
     });
   };
@@ -43,7 +43,7 @@ export const FirebaseProvider = (props) => {
 
   return (
     <firebaseContext.Provider
-      value={[createDB, write, readAllData, readData, deleteData]}
+      value={{ createDB, write, readAllData, readData, deleteData }}
     >
       {props.children}
     </firebaseContext.Provider>

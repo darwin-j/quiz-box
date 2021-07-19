@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import Link from "next/link";
 import { firebaseContext } from "../firebase/context";
 import { v4 as uuidv4 } from "uuid";
@@ -6,8 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Input, Text, Heading, Button } from "@chakra-ui/react";
 ////////////////////////////
 export default function Home() {
-  const [createDB, write, readAllData, readData, deleteData] =
-    useContext(firebaseContext);
+  const { write } = useContext(firebaseContext);
   const [name, setName] = useState();
 
   const userData = {
