@@ -1,33 +1,61 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { storage } from "../../firebase/inti";
+import { firebaseContext } from "../../firebase/context";
 import { v4 as uuidv4 } from "uuid";
 import {
   Input,
   FormControl,
-  FormLabel,
   InputGroup,
   InputLeftElement,
-  FormErrorMessage,
-  Code,
-  Icon,
-  Text,
   InputRightElement,
+  Progress,
+  Button,
 } from "@chakra-ui/react";
 import { AiFillFileImage } from "react-icons/ai";
 
 const addQuiz = () => {
   const [question, setQuestion] = useState();
   const [urls, setUrls] = useState([]);
+  const [progress, setProgress] = useState();
+  const [quesId, setQuesId] = useState();
+  const { write } = useContext(firebaseContext);
 
   const handleImages = (imageFiles) => {
     const selectedImages = [...imageFiles];
     const id = uuidv4();
+    setQuesId(id);
     selectedImages.forEach(async (image) => {
       const storageRef = storage.ref(`images/${id}/${image.name}`);
-      await storageRef.put(image);
-      const url = await storageRef.getDownloadURL();
-      setUrls((prevUrls) => [...prevUrls, url]);
+      const uploadTask = storageRef.put(image);
+      uploadTask.on("state_changed", function (snapshot) {
+        const progressCal = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setProgress(progressCal);
+        if (progressCal == 100) {
+          storageRef.getDownloadURL().then((url) => {
+            setUrls((prevUrls) => [...prevUrls, url]);
+          });
+        }
+      });
     });
+  };
+
+  if (urls.length == 4) {
+  }
+
+  const handleForm = () => {
+    const uploadData = {
+      quesId,
+      question,
+      option: [
+        { 1: urls[0], isCorrect: false },
+        { 2: urls[1], isCorrect: false },
+        { 3: urls[2], isCorrect: false },
+        { 4: urls[3], isCorrect: false },
+      ],
+    };
+    write("quizQuestions", quesId, uploadData);
   };
 
   return (
@@ -51,6 +79,12 @@ const addQuiz = () => {
           </label>
         </InputGroup>
       </FormControl>
+      <Button onClick={handleForm} my="50px">
+        Upload
+      </Button>
+      {console.log(progress)}
+      <Progress maxW="200px" value={progress} />
+      {/* {urls.length > 0 ? console.log(urls) : "no"} */}
     </>
   );
 };
