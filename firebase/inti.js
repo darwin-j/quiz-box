@@ -13,6 +13,6 @@ if (!firebase.apps.length) {
 } else {
   firebase.app();
 }
-
+export const firebaseTimeStamp = firebase.firestore.Timestamp.now();
 export const firebaseDB = firebase.firestore();
 export const storage = firebase.storage();

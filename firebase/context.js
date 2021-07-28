@@ -1,9 +1,11 @@
-import { createContext } from "react";
-import { firebaseDB } from "./inti";
+import { createContext, useState } from "react";
+import { firebaseDB, firebaseTimeStamp } from "./inti";
 
 export const firebaseContext = createContext();
 
 export const FirebaseProvider = (props) => {
+  const [number, setNumber] = useState();
+
   const createDB = (DBname, docID, docData) => {
     firebaseDB.collection(DBname).doc(docID).set(docData);
   };
@@ -36,6 +38,19 @@ export const FirebaseProvider = (props) => {
       });
   };
 
+  const getLastDocNum = (DBname) => {
+    const docRef = firebaseDB.collection(DBname);
+    docRef
+      .orderBy("timeStamp", "desc")
+      .limit(1)
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          setNumber(data.quesNum);
+        });
+      });
+  };
+
   const deleteData = (DBname, docID) => {
     const docRef = firebaseDB.collection(DBname).doc(docID);
     docRef.delete();
@@ -43,7 +58,16 @@ export const FirebaseProvider = (props) => {
 
   return (
     <firebaseContext.Provider
-      value={{ createDB, write, readAllData, readData, deleteData }}
+      value={{
+        createDB,
+        write,
+        readAllData,
+        readData,
+        deleteData,
+        firebaseTimeStamp,
+        getLastDocNum,
+        number,
+      }}
     >
       {props.children}
     </firebaseContext.Provider>

@@ -18,9 +18,11 @@ const addQuiz = () => {
   const [urls, setUrls] = useState([]);
   const [progress, setProgress] = useState();
   const [quesId, setQuesId] = useState();
-  const { write } = useContext(firebaseContext);
+  const { write, firebaseTimeStamp, getLastDocNum, number } =
+    useContext(firebaseContext);
 
   const handleImages = (imageFiles) => {
+    getLastDocNum("quizQuestions");
     const selectedImages = [...imageFiles];
     const id = uuidv4();
     setQuesId(id);
@@ -46,6 +48,7 @@ const addQuiz = () => {
 
   const handleForm = () => {
     const uploadData = {
+      quesNum: number + 1,
       quesId,
       question,
       option: [
@@ -54,6 +57,7 @@ const addQuiz = () => {
         { 3: urls[2], isCorrect: false },
         { 4: urls[3], isCorrect: false },
       ],
+      timeStamp: firebaseTimeStamp.seconds,
     };
     write("quizQuestions", quesId, uploadData);
   };
