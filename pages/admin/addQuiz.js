@@ -52,10 +52,10 @@ const addQuiz = () => {
       quesId,
       question,
       option: [
-        { 1: urls[0], isCorrect: false },
-        { 2: urls[1], isCorrect: false },
-        { 3: urls[2], isCorrect: false },
-        { 4: urls[3], isCorrect: false },
+        { url: urls[0], isCorrect: false },
+        { url: urls[1], isCorrect: false },
+        { url: urls[2], isCorrect: false },
+        { url: urls[3], isCorrect: false },
       ],
       timeStamp: firebaseTimeStamp.seconds,
     };

@@ -4,7 +4,9 @@ import { firebaseDB, firebaseTimeStamp } from "./inti";
 export const firebaseContext = createContext();
 
 export const FirebaseProvider = (props) => {
-  const [number, setNumber] = useState();
+  const [number, setNumber] = useState(0);
+  const [question, setQuestion] = useState();
+  const [user, setUser] = useState();
 
   const createDB = (DBname, docID, docData) => {
     firebaseDB.collection(DBname).doc(docID).set(docData);
@@ -14,7 +16,7 @@ export const FirebaseProvider = (props) => {
     firebaseDB.collection(DBname).doc(docID).set(docData);
   };
 
-  const readAllData = (DBname) => {
+  const getAllData = (DBname) => {
     const DBref = firebaseDB.collection(DBname);
     DBref.onSnapshot((querySnapshot) => {
       const dataArray = [];
@@ -25,16 +27,23 @@ export const FirebaseProvider = (props) => {
     });
   };
 
-  const readData = (DBname, docID) => {
+  const getDataByDocId = (DBname, docID) => {
     const docRef = firebaseDB.collection(DBname).doc(docID);
-
     docRef
       .get()
-      .then((doc) => {
-        console.log(doc.data());
-      })
-      .catch((err) => {
-        console.log(err);
+      .then((data) => setUser(data.data()))
+      .catch((err) => console.log(err));
+  };
+
+  const getDataByQuesNum = (DBname, quesNum) => {
+    const docRef = firebaseDB.collection(DBname);
+    docRef
+      .where("quesNum", ">", quesNum)
+      .limit(1)
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          setQuestion(doc.data());
+        });
       });
   };
 
@@ -61,12 +70,15 @@ export const FirebaseProvider = (props) => {
       value={{
         createDB,
         write,
-        readAllData,
-        readData,
+        getAllData,
+        getDataByDocId,
         deleteData,
         firebaseTimeStamp,
         getLastDocNum,
+        getDataByQuesNum,
         number,
+        question,
+        user,
       }}
     >
       {props.children}
