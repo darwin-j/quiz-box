@@ -26,6 +26,7 @@ const user = () => {
           id,
           name: user.name,
           questions,
+          scores: [],
         })
       : "";
     questions.length == totalQuesAsked
@@ -38,7 +39,6 @@ const user = () => {
 
   return (
     <>
-      {questions.length == totalQuesAsked}
       <Text>{question ? question.question : "loading"}</Text>
       <ul>
         {question
