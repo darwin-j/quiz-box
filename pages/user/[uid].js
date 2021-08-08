@@ -20,18 +20,19 @@ const user = () => {
   const handleClick = (index) => {
     question.option[index].isCorrect = true;
     setQuestions([...questions, question]);
+    console.log(questions);
     console.log(questions.length, totalQuesAsked);
     questions.length == totalQuesAsked
       ? write("userData", id, {
           id,
           name: user.name,
           questions,
-          scores: [],
         })
       : "";
     questions.length == totalQuesAsked
       ? () => {
           router.replace(`/share-link/${id}`);
+          console.log("hi");
         }
       : "";
     setQuestionNumber(questionNumber + 1);
@@ -43,14 +44,7 @@ const user = () => {
       <ul>
         {question
           ? question.option.map((chose, index) => (
-              <li
-                key={index}
-                onClick={() =>
-                  questions.length == totalQuesAsked - 1
-                    ? router.replace(`/share-link/${id}`)
-                    : ""
-                }
-              >
+              <li key={index}>
                 <img src={chose.url} onClick={() => handleClick(index)} />
               </li>
             ))
